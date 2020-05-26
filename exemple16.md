@@ -22,7 +22,19 @@ Hem de tenir en compte que en el moment d'arrancar el docker, hem de fer que el 
 
 2. Túnel SSH Reverse
 
-Un cop ja tenim el servei Ldap arrencat en segon pla, hem d'obrir el túnel reverse SSH des del nostre host local a la AMI d'Amazon. Aquest túnel ha d'anar lligat al servei ldap del host-local:
+Un cop ja tenim el servei Ldap arrencat en segon pla, hem d'obrir el túnel reverse SSH des del nostre host local a la AMI d'Amazon. Aquest túnel ha d'anar lligat al servei ldap del host-local. Abans d'obrir el túnel, ens hem d'assegurar que la AMI té el servei SSH ben configurat per tal de que pugui fer "binding" dels ports a les altres interfícies. Per fer això, hem de modificar el valor de "GatewayPorts" a "yes" dins el fitxer "/etc/ssh/sshd_config":
+
+```
+...
+#AllowAgentForwarding yes
+#AllowTcpForwarding yes
+GatewayPorts yes
+X11Forwarding yes
+#X11DisplayOffset 10
+...
+```
+
+Un cop tinguem ben configurat això, ja podem crear el túnel reverse:
 
 ```
 [adria@pc ~]$ ssh -R 0.0.0.0:9001:ldap.edt.org:389 -i .ssh/sshawskey.pem fedora@18.130.20.35
